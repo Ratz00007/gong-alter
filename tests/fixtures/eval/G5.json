@@ -1,0 +1,25 @@
+{
+  "id": "G5",
+  "name": "Heavily accented prospect, noisy line",
+  "language": "en",
+  "durationSec": 900,
+  "scoreTasks": ["T02", "T04"],
+  "segments": [
+    { "speaker": "SPEAKER_01", "startMs": 0, "endMs": 5200, "text": "So - the onboarding, it takes us 6 weeks, and half of that is the manual approval chain, that is the real pain." },
+    { "speaker": "SPEAKER_00", "startMs": 5600, "endMs": 9800, "text": "That is a heavy chain. What would it mean if the approvals were automatic?" },
+    { "speaker": "SPEAKER_01", "startMs": 10200, "endMs": 16800, "text": "It would save maybe 25 percent of setup time, and our CFO would still need to sign the final order." },
+    { "speaker": "SPEAKER_00", "startMs": 17200, "endMs": 21400, "text": "Got it. I will send the one-pager on the approval automation." },
+    { "speaker": "SPEAKER_01", "startMs": 22000, "endMs": 25600, "text": "Good. The criteria will be rollout speed and the audit trail." }
+  ],
+  "expected": {
+    "T02": { "repCluster": "SPEAKER_00" },
+    "T04": {
+      "M": { "notFound": false, "valueIncludes": "6 weeks" },
+      "E": { "notFound": false, "valueIncludes": "CFO" },
+      "D_CRITERIA": { "notFound": false, "valueIncludes": "criteria" },
+      "D_PROCESS": { "notFound": true },
+      "I": { "notFound": false, "valueIncludes": "manual" },
+      "C": { "notFound": true }
+    }
+  }
+}

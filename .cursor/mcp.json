@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "valence": {
+      "command": "bun",
+      "args": ["src/mcp/server.ts"]
+    }
+  }
+}

@@ -1,0 +1,723 @@
+// AMBER — Prisma schema per Build Dossier Ch. 4 (Tables 4.1–4.21)
+// All 19 numbered tables (20 entities incl. Job), all 19 enums, index set per Table 4.20.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================ ENUMS (Table 4.21) ============================
+
+enum DealStage {
+  LEAD
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  WON
+  LOST
+  PARKED
+}
+
+enum CallSource {
+  UPLOAD
+  IMPORT
+  LIVE_SESSION
+}
+
+enum CallStatus {
+  UPLOADED
+  NORMALIZING
+  TRANSCRIBING
+  ANALYZING
+  INDEXING
+  READY
+  REVIEWED
+  ARCHIVED
+  FAILED
+  CANCELED
+}
+
+enum SpeakerLabel {
+  SPEAKER_00
+  SPEAKER_01
+  REP
+  PROSPECT
+  UNKNOWN
+}
+
+enum InsightType {
+  MEDDIC_M
+  MEDDIC_E
+  MEDDIC_D_CRITERIA
+  MEDDIC_D_PROCESS
+  MEDDIC_I
+  MEDDIC_C
+  RISK_FLAG
+  OBJECTION
+  BUYING_SIGNAL
+  COMPETITOR
+  PRICING_SIGNAL
+  TIMELINE_SIGNAL
+  NEXT_STEP
+  TOPIC
+}
+
+enum InsightStatus {
+  ACTIVE
+  CONFIRMED
+  DISMISSED
+  SUPERSEDED
+}
+
+enum Channel {
+  EMAIL
+  LINKEDIN
+  OTHER
+}
+
+enum FollowUpStatus {
+  DRAFT
+  EDITED
+  COPIED
+  SENT
+  DISCARDED
+}
+
+enum PracticeOrigin {
+  USER_PROMOTED
+  MODEL_SUGGESTED
+}
+
+enum PracticeStatus {
+  CANDIDATE
+  ACCEPTED
+  ARCHIVED
+}
+
+enum Provider {
+  OLLAMA
+  OPENAI
+  ANTHROPIC
+  GEMINI
+  COMPATIBLE
+  ZAI
+  LOCAL_STT
+  LIVE_STT
+  MOCK
+}
+
+enum RunStatus {
+  PENDING
+  RUNNING
+  OK
+  RETRIED
+  ESCALATED
+  FAILED
+}
+
+enum PatternType {
+  REGEX
+  NER
+}
+
+enum EntityType {
+  EMAIL
+  PHONE
+  CREDIT_CARD
+  IBAN
+  URL
+  PERSON
+  ORG
+  AMOUNT
+  CUSTOM
+}
+
+enum RuleAction {
+  MASK
+  REPLACE
+  SKIP
+}
+
+enum RuleScope {
+  CLOUD_ONLY
+  ALL
+}
+
+enum EmbeddableType {
+  SEGMENT
+  SEGMENT_WINDOW
+  CALL_SUMMARY
+  NOTE
+  BEST_PRACTICE
+  INSIGHT
+}
+
+enum JobType {
+  NORMALIZE
+  TRANSCRIBE
+  ANALYZE
+  INDEX
+  REINDEX
+  EVAL
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  DONE
+  FAILED
+  CANCELED
+}
+
+// ============================ CORE ENTITIES (4.1–4.4) ============================
+
+model Deal {
+  id              String    @id @default(cuid())
+  title           String
+  account         String
+  stage           DealStage @default(LEAD)
+  valueCents      Int?
+  currency        String    @default("EUR")
+  expectedCloseAt DateTime?
+  healthScore     Int?
+  nextStep        String?
+  nextStepDueAt   DateTime?
+  archivedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastActivityAt  DateTime  @default(now())
+
+  contacts Contact[]
+  calls    Call[]
+  insights Insight[]
+  notes    Note[]
+  events   DealEvent[]
+  liveSessions LiveSession[]
+  emailMessages EmailMessage[]
+}
+
+model Contact {
+  id                String   @id @default(cuid())
+  dealId            String
+  name              String
+  title             String?
+  email             String?
+  phone             String?
+  isChampion        Boolean  @default(false)
+  isEconomicBuyer   Boolean  @default(false)
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  deal  Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  calls Call[]
+
+  @@index([dealId])
+}
+
+model Call {
+  id           String     @id @default(cuid())
+  title        String
+  dealId       String?
+  contactId    String?
+  occurredAt   DateTime
+  durationSec  Int?
+  source       CallSource @default(UPLOAD)
+  status       CallStatus @default(UPLOADED)
+  audioSha256  String?
+  mediaAssetId String?
+  normalizedAssetId String?
+  language     String?
+  errorMessage String?
+  failedStage  String?
+  retryCount   Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  deal          Deal?          @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  contact       Contact?       @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  mediaAsset    MediaAsset?    @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
+  normalizedAsset MediaAsset?  @relation("CallNormalizedAsset", fields: [normalizedAssetId], references: [id], onDelete: SetNull)
+  transcript    Transcript?
+  insights      Insight[]
+  scorecard     Scorecard?
+  notes         Note[]
+  followUpDraft FollowUpDraft?
+  runs          ProviderRun[]
+  jobs          Job[]
+  practices     BestPractice[]
+  summary       CallSummary?
+  liveSessions  LiveSession[] @relation("LiveFinalizedCall")
+
+  @@index([status, createdAt])
+  @@index([dealId, occurredAt])
+  @@index([audioSha256])
+}
+
+model MediaAsset {
+  id           String   @id @default(cuid())
+  sha256       String   @unique
+  filePath     String
+  mimeType     String
+  sizeBytes    BigInt
+  durationSec  Float?
+  sampleRateHz Int?
+  channels     Int?
+  createdAt    DateTime @default(now())
+
+  calls          Call[]
+  callsNormalized Call[] @relation("CallNormalizedAsset")
+  liveSessions    LiveSession[] @relation("LiveSessionAudio")
+}
+
+// ============================ TRANSCRIPT ENTITIES (4.5–4.6) ============================
+
+model Transcript {
+  id            String   @id @default(cuid())
+  callId        String   @unique
+  fullText      String
+  wordCount     Int
+  language      String
+  confidenceAvg Float?
+  sttModel      String
+  providerRunId String?
+  createdAt     DateTime @default(now())
+
+  call        Call         @relation(fields: [callId], references: [id], onDelete: Cascade)
+  segments    Segment[]
+  providerRun ProviderRun? @relation(fields: [providerRunId], references: [id], onDelete: SetNull)
+
+  @@index([callId])
+}
+
+model Segment {
+  id           String       @id @default(cuid())
+  transcriptId String
+  idx          Int
+  speaker      SpeakerLabel
+  startMs      Int
+  endMs        Int
+  text         String
+
+  transcript Transcript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+
+  @@unique([transcriptId, idx])
+}
+
+// ============================ INTELLIGENCE ENTITIES (4.7–4.11) ============================
+
+model Insight {
+  id                String        @id @default(cuid())
+  callId            String
+  dealId            String?
+  type              InsightType
+  title             String
+  content           String
+  confidence        Float
+  evidenceSegmentIds Json
+  status            InsightStatus @default(ACTIVE)
+  supersedesId      String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  call        Call      @relation(fields: [callId], references: [id], onDelete: Cascade)
+  deal        Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  supersedes  Insight?  @relation("InsightSupersede", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy Insight[] @relation("InsightSupersede")
+
+  @@index([dealId, type, status])
+  @@index([callId, status])
+}
+
+model Scorecard {
+  id                  String   @id @default(cuid())
+  callId              String   @unique
+  rubricVersion       String
+  overall             Int
+  dimensions          Json
+  talkRatioRep        Float
+  questionCount       Int
+  longestMonologueSec Int
+  providerRunId       String?
+  createdAt           DateTime @default(now())
+
+  call        Call         @relation(fields: [callId], references: [id], onDelete: Cascade)
+  providerRun ProviderRun? @relation(fields: [providerRunId], references: [id], onDelete: SetNull)
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  callId    String?
+  dealId    String?
+  body      String
+  pinned    Boolean  @default(false)
+  origin    String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  call Call? @relation(fields: [callId], references: [id], onDelete: Cascade)
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([callId])
+  @@index([dealId])
+}
+
+model FollowUpDraft {
+  id        String          @id @default(cuid())
+  callId    String          @unique
+  channel   Channel         @default(EMAIL)
+  subject   String
+  body      String
+  tone      String          @default("warm-professional")
+  status    FollowUpStatus  @default(DRAFT)
+  sentAt    DateTime?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  call Call @relation(fields: [callId], references: [id], onDelete: Cascade)
+}
+
+model BestPractice {
+  id                String         @id @default(cuid())
+  title             String
+  category          String
+  body              String
+  sourceCallId      String?
+  evidenceSegmentIds Json          @default("[]")
+  origin            PracticeOrigin
+  status            PracticeStatus @default(CANDIDATE)
+  tags              Json           @default("[]")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  sourceCall Call? @relation(fields: [sourceCallId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+}
+
+// ============================ AI ENGINE ENTITIES (4.12–4.15) ============================
+
+model ProviderRun {
+  id               String     @id @default(cuid())
+  taskId           String
+  provider         Provider
+  model            String
+  promptTemplateId String?
+  callId           String?
+  status           RunStatus  @default(PENDING)
+  attempt          Int        @default(1)
+  fallbackFromId   String?
+  inputTokens      Int?
+  outputTokens     Int?
+  costUsd          Float      @default(0)
+  latencyMs        Int?
+  errorCode        String?
+  error            String?
+  createdAt        DateTime   @default(now())
+  finishedAt       DateTime?
+
+  call          Call?           @relation(fields: [callId], references: [id], onDelete: SetNull)
+  promptTemplate PromptTemplate? @relation(fields: [promptTemplateId], references: [id], onDelete: SetNull)
+  fallbackFrom   ProviderRun?   @relation("RunFallback", fields: [fallbackFromId], references: [id], onDelete: SetNull)
+  replacedRuns   ProviderRun[]  @relation("RunFallback")
+
+  budgetEntry BudgetEntry?
+  transcripts  Transcript[]
+  scorecards  Scorecard[]
+  summaries   CallSummary[]
+
+  @@index([callId, createdAt])
+  @@index([createdAt])
+}
+
+model PromptTemplate {
+  id              String  @id @default(cuid())
+  taskId          String
+  version         Int
+  systemPrompt    String
+  userTemplate    String
+  outputSchema    Json
+  modelHint       String?
+  minContextChars Int     @default(0)
+  active          Boolean @default(false)
+  createdAt       DateTime @default(now())
+
+  runs ProviderRun[]
+
+  @@unique([taskId, version])
+  @@index([taskId, active])
+}
+
+model BudgetEntry {
+  id             String   @id @default(cuid())
+  month          String
+  providerRunId  String   @unique
+  amountUsd      Float
+  runningTotalUsd Float
+  note           String?
+  createdAt      DateTime @default(now())
+
+  providerRun ProviderRun @relation(fields: [providerRunId], references: [id], onDelete: Cascade)
+
+  @@index([month, createdAt])
+}
+
+model RedactionRule {
+  id          String      @id @default(cuid())
+  name        String
+  patternType PatternType
+  pattern     String?
+  entityType  EntityType?
+  action      RuleAction  @default(MASK)
+  replacement String?
+  scope       RuleScope   @default(CLOUD_ONLY)
+  priority    Int         @default(100)
+  enabled     Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// ============================ EVAL / SEARCH / CONTROL (4.16–4.19) ============================
+
+model EvalCase {
+  id           String   @id @default(cuid())
+  taskId       String
+  name         String
+  fixturePath  String
+  expectedJson Json
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  runs EvalRun[]
+}
+
+model EvalRun {
+  id        String   @id @default(cuid())
+  caseId    String
+  provider  String
+  model     String
+  scores    Json
+  passed    Boolean
+  createdAt DateTime @default(now())
+
+  case EvalCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+model Embedding {
+  id           String         @id @default(cuid())
+  resourceType EmbeddableType
+  resourceId   String
+  chunkIdx     Int            @default(0)
+  text         String
+  model        String
+  dim          Int
+  vector       Bytes
+  createdAt    DateTime       @default(now())
+
+  @@index([resourceType, resourceId])
+  @@index([model])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  callId      String?
+  type        JobType
+  status      JobStatus @default(QUEUED)
+  priority    Int       @default(5)
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3)
+  runAfter    DateTime?
+  lockedAt    DateTime?
+  lastError   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  call Call? @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@index([status, priority, runAfter])
+}
+
+// ================== CHANGE-REQUEST ADDITIONS (see build report) ==================
+// FR-006 needs a summary store (dossier Ch. 4 lacks one); FR-012 needs a stage-
+// change/timeline event log. Both are additive per the Ch. 4 migration policy.
+
+model CallSummary {
+  id                String   @id @default(cuid())
+  callId            String   @unique
+  summary           String
+  topics            Json
+  nextStepSuggested String?
+  providerRunId     String?
+  createdAt         DateTime @default(now())
+
+  call          Call          @relation(fields: [callId], references: [id], onDelete: Cascade)
+  providerRun   ProviderRun?  @relation(fields: [providerRunId], references: [id], onDelete: SetNull)
+}
+
+model DealEvent {
+  id         String   @id @default(cuid())
+  dealId     String
+  kind       String
+  payload    Json
+  occurredAt DateTime
+  createdAt  DateTime @default(now())
+
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId, occurredAt])
+}
+
+// ================== LIVE ASSIST (WO-LA, FR-025..029) ==================
+// Gong-parity extension: real-time cue engine + finalize handoff into the
+// six-stage pipeline. Single-channel live capture; speaker attribution is
+// heuristic (pause-cluster) post-call, honestly labeled in provenance.
+
+model LiveSession {
+  id             String    @id @default(cuid())
+  title          String
+  dealId         String?
+  status         String    @default("LIVE") // LIVE | ENDED
+  source         String    @default("INJECTED") // BROWSER_MIC | INJECTED
+  startedAt      DateTime  @default(now())
+  endedAt        DateTime?
+  durationMs     Int       @default(0)
+  transcriptText String    @default("")
+  wordCount      Int       @default(0)
+  questionCount  Int       @default(0)
+  cueCount       Int       @default(0)
+  bytesReceived  BigInt    @default(0)
+  callId         String? // resulting analyzed Call after finalize
+  audioAssetId   String? // recorded mic audio (vault, never leaves machine)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  deal      Deal?         @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  call      Call?         @relation("LiveFinalizedCall", fields: [callId], references: [id], onDelete: SetNull)
+  audioAsset MediaAsset?  @relation("LiveSessionAudio", fields: [audioAssetId], references: [id], onDelete: SetNull)
+  cueFires  LiveCueFire[]
+
+  @@index([status])
+  @@index([dealId])
+}
+
+model LiveCue {
+  id          String   @id @default(cuid())
+  name        String
+  category    String // OBJECTION | COMPETITOR | PROCESS | COACHING
+  kind        String   @default("PHRASE") // PHRASE | RULE_NO_QUESTION
+  triggers    Json // PHRASE: string[]; RULE: { wordsSinceQuestion: number }
+  guidance    String
+  cooldownSec Int      @default(180)
+  enabled     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  fires LiveCueFire[]
+}
+
+model LiveCueFire {
+  id        String   @id @default(cuid())
+  sessionId String
+  cueId     String
+  atMs      Int // session-relative ms
+  snippet   String // matched context window
+  createdAt DateTime @default(now())
+
+  session LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  cue     LiveCue     @relation(fields: [cueId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+// ================== INTEGRATIONS & CONNECTORS ==================
+
+enum IntegrationType {
+  GMAIL
+  OUTLOOK
+  IMAP
+  HUBSPOT
+  SALESFORCE
+  PIPEDRIVE
+  WEBHOOK
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  DISCONNECTED
+  SYNCING
+  ERROR
+}
+
+model IntegrationConnection {
+  id              String            @id @default(cuid())
+  type            IntegrationType
+  name            String
+  accountEmail    String?
+  status          IntegrationStatus @default(DISCONNECTED)
+  configJson      Json?
+  lastSyncAt      DateTime?
+  lastError       String?
+  autoSync        Boolean           @default(true)
+  syncIntervalMin Int               @default(30)
+  itemsSynced     Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  syncLogs        IntegrationSyncLog[]
+  emailMessages   EmailMessage[]
+
+  @@unique([type, accountEmail])
+  @@index([type, status])
+}
+
+model IntegrationSyncLog {
+  id             String                @id @default(cuid())
+  connectionId   String
+  status         String                // OK | ERROR | RUNNING
+  action         String                // PUSH | PULL | TEST
+  itemsCount     Int                   @default(0)
+  message        String?
+  detailsJson    Json?
+  createdAt      DateTime              @default(now())
+
+  connection     IntegrationConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([connectionId, createdAt])
+}
+
+model EmailMessage {
+  id             String                @id @default(cuid())
+  connectionId   String?
+  dealId         String?
+  contactId      String?
+  externalId     String?
+  from           String
+  to             String
+  subject        String
+  bodyText       String
+  sentAt         DateTime
+  direction      String                @default("INBOUND") // INBOUND | OUTBOUND
+  sentiment      String?               // POSITIVE | NEUTRAL | CAUTION | OBJECTION
+  intent         String?               // INQUIRY | PRICING | OBJECTION | CLOSING | GENERAL
+  insightsJson   Json?
+  callId         String?
+  createdAt      DateTime              @default(now())
+
+  connection     IntegrationConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+  deal           Deal?                  @relation(fields: [dealId], references: [id], onDelete: SetNull)
+
+  @@index([dealId, sentAt])
+  @@index([from])
+}
+

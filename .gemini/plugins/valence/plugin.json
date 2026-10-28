@@ -1,0 +1,14 @@
+{
+  "name": "valence-revenue-intelligence",
+  "version": "1.0.0",
+  "description": "VALENCE Sovereign Revenue Intelligence — direct coding agent plugin & MCP server to manage sales deals, call transcripts, MEDDIC scorecards, customer objections, and universal email/CRM integrations.",
+  "author": "VALENCE Team",
+  "skills": ["skills/valence-revenue-intelligence"],
+  "rules": ["rules/VALENCE.md"],
+  "mcpServers": {
+    "valence": {
+      "command": "bun",
+      "args": ["src/mcp/server.ts"]
+    }
+  }
+}

@@ -1,0 +1,321 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-positive: var(--positive);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+/* ============ VALENCE DESIGN SYSTEM ============
+   Anthropic / Claude Editorial Craft + Apple Frosted Liquid Glass
+   Strict Rule: Zero blue, zero purple across the platform.
+   ================================================= */
+
+:root {
+  /* Surface: Claude Oatmeal / Linen / Sandstone */
+  --background: #faf9f5;
+  --card: rgba(255, 255, 255, 0.78);
+  --card-solid: #ffffff;
+  --raised: #f1ede3;
+  --popover: rgba(255, 255, 255, 0.92);
+
+  /* Ink */
+  --foreground: #201f1d;
+  --ink-secondary: #5a544a;
+  --muted-foreground: #8a8275;
+
+  /* Accent: Anthropic Signature Terracotta Copper */
+  --primary: #d97757;
+  --primary-foreground: #ffffff;
+  --accent-soft: rgba(217, 119, 87, 0.12);
+  --accent-ink: #9a4327;
+  --accent: var(--accent-soft);
+  --accent-foreground: var(--accent-ink);
+
+  /* Structure & Borders (Hairline Glass Specular Rim) */
+  --border: rgba(45, 40, 32, 0.10);
+  --border-strong: rgba(45, 40, 32, 0.18);
+  --input: rgba(45, 40, 32, 0.12);
+  --ring: #d97757;
+
+  /* Semantics: Zero blue / zero purple */
+  --positive: #3d7a5a; /* Sage olive green */
+  --warning: #c27a29;  /* Ochre amber */
+  --danger: #be4337;   /* Terracotta crimson */
+  --destructive: #be4337;
+
+  /* Typography Scale */
+  --text-display-lg: 36px;
+  --text-display: 28px;
+  --text-title: 20px;
+  --text-body: 15px;
+  --text-small: 13px;
+  --text-micro: 11px;
+
+  /* Radius Scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius: 16px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Charts: Warm Terracotta, Ochre, Sage Olive, Umber */
+  --chart-1: #d97757;
+  --chart-2: #c27a29;
+  --chart-3: #3d7a5a;
+  --chart-4: #8c4e33;
+  --chart-5: #8a8275;
+
+  /* Sidebar */
+  --sidebar: rgba(241, 237, 227, 0.85);
+  --sidebar-foreground: #201f1d;
+  --sidebar-primary: #d97757;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(217, 119, 87, 0.14);
+  --sidebar-accent-foreground: #9a4327;
+  --sidebar-border: rgba(45, 40, 32, 0.10);
+  --sidebar-ring: #d97757;
+
+  /* Apple Glass & Ambient Shadows */
+  --shadow-sm: 0 1px 3px rgba(32, 31, 29, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(32, 31, 29, 0.07);
+  --shadow-lg: 0 10px 25px -4px rgba(32, 31, 29, 0.09), 0 4px 10px -2px rgba(32, 31, 29, 0.04);
+  --shadow-lift: 0 14px 34px -8px rgba(32, 31, 29, 0.14), 0 2px 6px rgba(32, 31, 29, 0.06);
+  --shadow-glow: 0 0 28px -4px rgba(217, 119, 87, 0.32);
+}
+
+/* ============ DARK MODE: CLAUDE ESPRESSO NOIR & APPLE OBSIDIAN GLASS ============ */
+.dark {
+  /* Surface: Deep Warm Charcoal Espresso */
+  --background: #141413;
+  --card: rgba(28, 27, 24, 0.72);
+  --card-solid: #1c1b18;
+  --raised: #23221e;
+  --popover: rgba(28, 27, 24, 0.94);
+
+  /* Ink */
+  --foreground: #f4f1ea;
+  --ink-secondary: #a8a396;
+  --muted-foreground: #736e63;
+
+  /* Accent: Luminous Terracotta Flare */
+  --primary: #d97757;
+  --primary-foreground: #141413;
+  --accent-soft: rgba(217, 119, 87, 0.18);
+  --accent-ink: #f29e81;
+  --accent: var(--accent-soft);
+  --accent-foreground: var(--accent-ink);
+
+  /* Structure & Borders */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --input: rgba(255, 255, 255, 0.10);
+  --ring: #d97757;
+
+  /* Semantics */
+  --positive: #4e8f69; /* Sage green */
+  --warning: #d98e3b;  /* Amber */
+  --danger: #d45144;   /* Terracotta red */
+  --destructive: #d45144;
+
+  /* Charts */
+  --chart-1: #d97757;
+  --chart-2: #d98e3b;
+  --chart-3: #4e8f69;
+  --chart-4: #f29e81;
+  --chart-5: #736e63;
+
+  /* Sidebar */
+  --sidebar: rgba(20, 20, 19, 0.88);
+  --sidebar-foreground: #f4f1ea;
+  --sidebar-primary: #d97757;
+  --sidebar-primary-foreground: #141413;
+  --sidebar-accent: rgba(217, 119, 87, 0.20);
+  --sidebar-accent-foreground: #f29e81;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #d97757;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 30px -6px rgba(0, 0, 0, 0.60);
+  --shadow-lift: 0 18px 40px -8px rgba(0, 0, 0, 0.70);
+  --shadow-glow: 0 0 32px -4px rgba(217, 119, 87, 0.38);
+}
+
+/* ============ GLOBAL CORE STYLING ============ */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-size: var(--text-body);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(217, 119, 87, 0.28);
+  color: inherit;
+}
+
+/* Tabular Numerals — strictly prevents layout jitter during scrubbing or metric changes */
+.tnum, .tabular-nums {
+  font-feature-settings: "tnum" 1, "cv05" 1, "zero" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Accessible Warm Terracotta Focus Ring */
+*:focus-visible {
+  outline: 2px solid rgba(217, 119, 87, 0.60);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============ APPLE FROSTED GLASS UTILITIES ============ */
+
+.glass-panel {
+  background: var(--card);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.10), var(--shadow-md);
+}
+
+.glass-dock {
+  background: var(--sidebar);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border-right: 1px solid var(--sidebar-border);
+}
+
+.glass-header {
+  background: var(--card);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Desktop Draggable Regions for Frameless Titlebars */
+.app-drag-region {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Cards that invite click with Apple fluid physics */
+.card-lift {
+  transition: box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 240ms;
+}
+.card-lift:hover {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-1.5px);
+  border-color: var(--border-strong);
+}
+
+/* Terracotta Brand Gradient */
+.brand-gradient {
+  background: linear-gradient(135deg, #e88a68 0%, #d97757 55%, #b65435 100%);
+}
+
+/* Claude Editorial Typography */
+.font-editorial {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+.reader {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  line-height: 1.82;
+  font-size: 1.05rem;
+}
+
+/* Skeleton Loading Shimmer */
+@keyframes valence-shimmer {
+  0% { background-position: -480px 0; }
+  100% { background-position: 480px 0; }
+}
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--raised) 25%, rgba(217, 119, 87, 0.08) 50%, var(--raised) 75%);
+  background-size: 960px 100%;
+  animation: valence-shimmer 1.8s linear infinite;
+}
+
+/* View transitions */
+@keyframes valence-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.view-enter {
+  animation: valence-rise 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Micro-caps section label */
+.label-caps {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Custom Terracotta Scrollbars */
+.scroll-warm {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217, 119, 87, 0.25) transparent;
+}
+.scroll-warm::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll-warm::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 87, 0.25);
+  border-radius: 999px;
+}
+.scroll-warm::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 119, 87, 0.45);
+}
+.scroll-warm::-webkit-scrollbar-track { background: transparent; }

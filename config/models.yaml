@@ -1,0 +1,92 @@
+# AMBER — model catalog (Ch. 11). This is data, not code: swap models here, never in source.
+# The `mock` provider replays deterministic fixtures for CI / demo installs (Ch. 9
+# testing strategy); disable via Setting providers.mockEnabled=false once real
+# providers are configured.
+#
+# Provider order inside a hint chain IS the preference order (LOCAL_FIRST walks
+# top to bottom). `zai` is the bundled platform cloud provider — works with no
+# keys in hosted sandboxes; on a personal machine it needs a .z-ai-config or it
+# is skipped gracefully.
+catalog:
+  small:
+    - provider: ollama
+      model: qwen3:4b
+      contextTokens: 32768
+    - provider: ollama
+      model: qwen3:8b
+      contextTokens: 32768
+    - provider: zai
+      model: glm-4.6
+      contextTokens: 128000
+    - provider: mock
+      model: amber-mock-small
+      contextTokens: 131072
+  medium:
+    - provider: ollama
+      model: qwen3:4b
+      contextTokens: 32768
+    - provider: ollama
+      model: phi4-mini
+      contextTokens: 128000
+    - provider: ollama
+      model: qwen3:8b
+      contextTokens: 32768
+    - provider: zai
+      model: glm-4.6
+      contextTokens: 128000
+    - provider: openai
+      model: gpt-4o-mini
+      contextTokens: 128000
+      pricePerMTokens: { input: 0.15, output: 0.60 }
+    - provider: anthropic
+      model: claude-sonnet
+      contextTokens: 200000
+    - provider: gemini
+      model: gemini-flash
+      contextTokens: 1000000
+    - provider: mock
+      model: amber-mock-medium
+      contextTokens: 131072
+  large:
+    - provider: openai
+      model: gpt-4o
+      contextTokens: 128000
+      pricePerMTokens: { input: 2.50, output: 10.00 }
+    - provider: anthropic
+      model: claude-sonnet
+      contextTokens: 200000
+    - provider: gemini
+      model: gemini-pro
+      contextTokens: 1000000
+    - provider: mock
+      model: amber-mock-large
+      contextTokens: 131072
+  embed:
+    - provider: ollama
+      model: nomic-embed-text
+      dim: 768
+    - provider: openai
+      model: text-embedding-3-small
+      dim: 1536
+    - provider: mock
+      model: amber-mock-embed
+      dim: 768
+  stt:
+    - provider: local_stt
+      model: whisper-small
+    - provider: zai
+      model: glm-asr
+  tts:
+    - provider: local_tts
+      model: kokoro-82m
+      voice: af_bella
+    - provider: browser
+      model: web-speech-api
+overrides: {}
+retention:
+  openai: zero-retention-api
+  anthropic: zero-retention-api
+  gemini: free-tier-stores
+  compatible: unknown
+  zai: platform-managed
+  mock: never-egresses

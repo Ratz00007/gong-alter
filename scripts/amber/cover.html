@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* Cascade palette: warmth / minimal / seed 13 (--c-* aliases) */
+  :root {
+    --c-bg: #f2f0f0;
+    --c-accent: #d76932;
+    --c-text: #22201f;
+    --c-muted: #89827f;
+    --c-mid: #58463d;
+    --c-surface: #eeeceb;
+  }
+  @page { size: 794px 1123px; margin: 0; }
+  html, body {
+    margin: 0; padding: 0;
+    width: 794px; height: 1123px;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  }
+  @media screen {
+    html { height: auto; display: flex; justify-content: center; min-height: 100vh; background: var(--c-bg); }
+    body { transform-origin: top center; scale: min(1, calc(100vw / 794)); margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.12); }
+  }
+  .cover {
+    position: relative; width: 794px; height: 1123px;
+    border: none; outline: none; box-shadow: none;
+  }
+  /* Layer 1 - background grid (primary at 2% opacity) - the ONLY overflow:hidden scope */
+  .layer1 {
+    position: absolute; inset: 0; overflow: hidden; z-index: 1;
+    background-image:
+      linear-gradient(rgba(88, 70, 61, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88, 70, 61, 0.02) 1px, transparent 1px);
+    background-size: 66px 66px;
+  }
+  /* Layer 2 - structure: ultra-thick vertical anchor line (6pt = 8px), 0.1H..0.9H */
+  .layer2 { position: absolute; inset: 0; z-index: 2; }
+  .anchor-line {
+    position: absolute; left: 95px; top: 112px; bottom: 113px;
+    width: 8px; background: var(--c-accent);
+  }
+  /* Layer 3 - content (no overflow rules) */
+  .layer3 { position: absolute; inset: 0; z-index: 3; }
+  .kicker {
+    position: absolute; left: 175px; top: 168px;
+    font-size: 19px; font-weight: 400; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--c-mid); opacity: 0.6;
+  }
+  .hero {
+    position: absolute; left: 175px; top: 337px; max-width: 508px;
+  }
+  .hero .title {
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
+    font-size: 85px; font-weight: 900; line-height: 1.15;
+    color: var(--c-text); letter-spacing: 1px;
+  }
+  .hero .subtitle {
+    margin-top: 18px;
+    font-size: 27px; font-weight: 300; line-height: 1.35;
+    color: var(--c-muted); max-width: 500px;
+  }
+  .summary {
+    position: absolute; left: 175px; top: 561px;
+    font-size: 22px; font-weight: 400; line-height: 1.6;
+    color: var(--c-text); opacity: 0.85; max-width: 476px;
+  }
+  .meta { position: absolute; left: 175px; top: 842px; max-width: 500px; }
+  .meta .prepared { font-size: 24px; font-weight: 500; color: var(--c-text); margin-bottom: 10px; }
+  .meta .roles    { font-size: 21px; font-weight: 400; color: var(--c-muted); line-height: 1.5; margin-bottom: 14px; }
+  .meta .edition  { font-size: 21px; font-weight: 400; color: var(--c-muted); letter-spacing: 0.5px; }
+  .meta .edition .dot { color: var(--c-accent); }
+</style>
+</head>
+<body>
+  <div class="cover">
+    <div class="layer1"></div>
+    <div class="layer2"><div class="anchor-line"></div></div>
+    <div class="layer3">
+      <div class="kicker">Architecture &amp; Product Blueprint &middot; V1.0</div>
+      <div class="hero">
+        <div class="title">AMBER</div>
+        <div class="subtitle">A personal, private, better-than-Gong revenue intelligence platform.</div>
+      </div>
+      <div class="summary">The complete build plan: a local-first hybrid AI engine, four feature pillars, the Warm Calm design system, and a phased roadmap.</div>
+      <div class="meta">
+        <div class="prepared">Prepared by the AMBER Architecture Guild</div>
+        <div class="roles">Principal Architect &middot; AI Infrastructure Lead &middot; Product Design Systems Engineer &middot; Senior Delivery Consultant</div>
+        <div class="edition">For personal use only <span class="dot">&middot;</span> not for sale <span class="dot">&middot;</span> October 2026</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

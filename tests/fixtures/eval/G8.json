@@ -1,0 +1,61 @@
+{
+  "id": "G8",
+  "name": "Multilingual call (EN + DE mix)",
+  "language": "en",
+  "durationSec": 960,
+  "scoreTasks": [
+    "T01",
+    "T03"
+  ],
+  "segments": [
+    {
+      "speaker": "REP",
+      "startMs": 0,
+      "endMs": 3800,
+      "text": "Let's keep it in English mostly - und kurz auf Deutsch, wenn es einfacher ist."
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 4200,
+      "endMs": 11200,
+      "text": "Gerne. Our onboarding takes 6 weeks, and the reporting is manual - das ist der eigentliche Schmerz."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 11600,
+      "endMs": 16200,
+      "text": "Verstanden. What would faster onboarding be worth in numbers?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 16600,
+      "endMs": 22800,
+      "text": "Maybe 20 percent of capacity. The process would be procurement then signature by end of November."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 23200,
+      "endMs": 27200,
+      "text": "Then let's book the technical session - does Thursday work?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 27600,
+      "endMs": 30600,
+      "text": "Donnerstag passt. Looking forward to it."
+    }
+  ],
+  "expected": {
+    "T01": {
+      "coverage": 0.95,
+      "language": "en"
+    },
+    "T03": {
+      "topics": [
+        "ist",
+        "onboarding"
+      ],
+      "nextStepSuggested": "Then let's book the technical session - does Thursday work?"
+    }
+  }
+}

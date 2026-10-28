@@ -1,0 +1,46 @@
+{
+  "id": "G4",
+  "name": "Short check-in, no next step",
+  "language": "en",
+  "durationSec": 360,
+  "scoreTasks": [
+    "T03",
+    "T05"
+  ],
+  "segments": [
+    {
+      "speaker": "REP",
+      "startMs": 0,
+      "endMs": 3500,
+      "text": "Quick check-in - anything new on your side since the demo?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 4000,
+      "endMs": 9500,
+      "text": "Nothing new; the team is still buried in manual reporting and the pain is unchanged."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 10000,
+      "endMs": 14200,
+      "text": "Understood. I will check back in a few weeks then."
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 14800,
+      "endMs": 18000,
+      "text": "Sounds fine. Talk soon."
+    }
+  ],
+  "expected": {
+    "T03": {
+      "topics": [
+        "check",
+        "new"
+      ],
+      "nextStepSuggested": null
+    },
+    "T05": []
+  }
+}

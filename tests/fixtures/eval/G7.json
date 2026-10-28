@@ -1,0 +1,17 @@
+{
+  "id": "G7",
+  "name": "Call with competitor comparisons",
+  "language": "en",
+  "durationSec": 1020,
+  "scoreTasks": ["T05"],
+  "segments": [
+    { "speaker": "REP", "startMs": 0, "endMs": 3600, "text": "Where are you in the evaluation today?" },
+    { "speaker": "PROSPECT", "startMs": 4000, "endMs": 11000, "text": "We are comparing you against HubSpot and Pipedrive; Salesforce is already in the building but unused." },
+    { "speaker": "REP", "startMs": 11400, "endMs": 15800, "text": "What separates the options in your view?" },
+    { "speaker": "PROSPECT", "startMs": 16200, "endMs": 22400, "text": "The audit trail and the onboarding speed. Zoho came up in procurement but security prefers your residency." },
+    { "speaker": "REP", "startMs": 22800, "endMs": 26800, "text": "Then let's set up the side-by-side session next week." }
+  ],
+  "expected": {
+    "T05": ["COMPETITOR"]
+  }
+}

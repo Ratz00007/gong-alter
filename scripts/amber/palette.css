@@ -1,0 +1,32 @@
+:root {
+  /* ── XL tier: backgrounds (S ≤ 0.08) ── */
+  --page-bg: #f2f0f0;
+  --section-bg: #eae9e8;
+  /* ── L tier: surfaces (S ≤ 0.15) ── */
+  --card-bg: #eeeceb;
+  --table-stripe: #f0efef;
+  /* ── M tier: structural fills (S ≤ 0.30) ── */
+  --header-fill: #58463d;
+  --cover-block: #7f6659;
+  /* ── S tier: edges & icons (S ≤ 0.50) ── */
+  --border: #c1aea4;
+  --icon: #7b5541;
+  /* ── XS tier: emphasis (S ≤ 0.75) ── */
+  --accent: #d76932;
+  --accent-secondary: #cd6e4e;
+  /* ── Typography ── */
+  --text-primary: #22201f;
+  --text-muted: #89827f;
+  /* ── Semantic (low-sat) ── */
+  --semantic-success: #489a63;
+  --semantic-warning: #9a7b3f;
+  --semantic-error: #a34941;
+  --semantic-info: #4a749e;
+  /* ── Cover template aliases (--c-* compat for cover.md templates 01-07) ── */
+  --c-bg: #f2f0f0;
+  --c-accent: #d76932;
+  --c-text: #22201f;
+  --c-muted: #89827f;
+  --c-mid: #58463d;
+  --c-surface: #eeeceb;
+}

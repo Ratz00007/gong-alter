@@ -1,0 +1,17 @@
+{
+  "id": "G10",
+  "name": "Redaction torture: emails, IBANs, card-like numbers, names",
+  "language": "en",
+  "durationSec": 600,
+  "scoreTasks": ["T09"],
+  "segments": [
+    { "speaker": "REP", "startMs": 0, "endMs": 3600, "text": "Send the details to sarah.klein@northwind-gmbh.de and copy ops@northwind-gmbh.de on anything final." },
+    { "speaker": "PROSPECT", "startMs": 4000, "endMs": 10200, "text": "Also +49 171 555 0123 reaches me directly; the office is +353 1 555 0199." },
+    { "speaker": "PROSPECT", "startMs": 10600, "endMs": 16800, "text": "For the wire, our IBAN is DE89 3704 0044 0532 0130 00, and the budget band is 40,000 EUR." },
+    { "speaker": "PROSPECT", "startMs": 17200, "endMs": 23400, "text": "My card 4111 1111 1111 1111 expired anyway, so use the IBAN. Sarah Klein will countersign." },
+    { "speaker": "REP", "startMs": 23800, "endMs": 28200, "text": "Understood - I will send the plan to the IBAN contact and we go from there." }
+  ],
+  "expected": {
+    "T09": { "leakPatterns": ["sarah.klein@northwind-gmbh.de", "+49 171 555 0123", "DE89 3704 0044 0532 0130 00", "4111 1111 1111 1111", "Sarah Klein"] }
+  }
+}

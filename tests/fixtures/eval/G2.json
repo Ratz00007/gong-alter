@@ -1,0 +1,94 @@
+{
+  "id": "G2",
+  "name": "Pricing negotiation with objections",
+  "language": "en",
+  "durationSec": 1320,
+  "scoreTasks": [
+    "T04",
+    "T05",
+    "T06"
+  ],
+  "segments": [
+    {
+      "speaker": "REP",
+      "startMs": 0,
+      "endMs": 3800,
+      "text": "You wanted to talk pricing - what is the concern exactly?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 4200,
+      "endMs": 11000,
+      "text": "Honestly the price is higher than we budgeted, and I am worried it will not survive procurement."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 11500,
+      "endMs": 18600,
+      "text": "Fair. If the value case holds, where does the discount conversation need to land?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 19000,
+      "endMs": 25800,
+      "text": "The metrics we track say onboarding cost drops 30 percent with automation, so a 10 percent discount for a two year term would work."
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 26400,
+      "endMs": 32800,
+      "text": "The CFO signs off on anything annual; the process is one procurement meeting then signature."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 33000,
+      "endMs": 39600,
+      "text": "Then let's schedule the pricing review with your CFO - does next Tuesday work?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 40000,
+      "endMs": 44200,
+      "text": "Next Tuesday works. Send the quote over."
+    }
+  ],
+  "expected": {
+    "T04": {
+      "M": {
+        "notFound": false,
+        "valueIncludes": "30 percent"
+      },
+      "E": {
+        "notFound": false,
+        "valueIncludes": "budget"
+      },
+      "D_CRITERIA": {
+        "notFound": true
+      },
+      "D_PROCESS": {
+        "notFound": false,
+        "valueIncludes": "procurement"
+      },
+      "I": {
+        "notFound": true
+      },
+      "C": {
+        "notFound": true
+      }
+    },
+    "T05": [
+      "OBJECTION",
+      "PRICING_SIGNAL",
+      "NEXT_STEP",
+      "TIMELINE_SIGNAL"
+    ],
+    "T06": {
+      "discovery": 8,
+      "value": 8,
+      "objections": 7,
+      "next_step": 9,
+      "talk_balance": 10,
+      "rapport": 7
+    }
+  }
+}

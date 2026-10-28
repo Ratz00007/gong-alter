@@ -1,0 +1,73 @@
+{
+  "id": "G6",
+  "name": "Renewal call with existing champion",
+  "language": "en",
+  "durationSec": 1140,
+  "scoreTasks": [
+    "T04",
+    "T05"
+  ],
+  "segments": [
+    {
+      "speaker": "REP",
+      "startMs": 0,
+      "endMs": 4200,
+      "text": "Great to see the rollout numbers. What is the plan for the renewal term?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 4600,
+      "endMs": 12800,
+      "text": "Usage grew 40 percent this year, and onboarding time fell from 6 weeks to 8 days, which the board noticed."
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 13400,
+      "endMs": 19600,
+      "text": "I will champion the renewal internally again and set up the committee review; the CFO signs after procurement."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 20000,
+      "endMs": 24600,
+      "text": "Then let's book the renewal session - would Friday suit?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 25000,
+      "endMs": 28800,
+      "text": "Friday works, looking forward to it. Budget-wise we expect the same band as last year."
+    }
+  ],
+  "expected": {
+    "T04": {
+      "M": {
+        "notFound": false,
+        "valueIncludes": "6 weeks"
+      },
+      "E": {
+        "notFound": false,
+        "valueIncludes": "CFO"
+      },
+      "D_CRITERIA": {
+        "notFound": true
+      },
+      "D_PROCESS": {
+        "notFound": false,
+        "valueIncludes": "procurement"
+      },
+      "I": {
+        "notFound": true
+      },
+      "C": {
+        "notFound": false,
+        "valueIncludes": "champion"
+      }
+    },
+    "T05": [
+      "BUYING_SIGNAL",
+      "PRICING_SIGNAL",
+      "NEXT_STEP"
+    ]
+  }
+}

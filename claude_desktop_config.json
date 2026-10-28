@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "valence-revenue-intelligence": {
+      "command": "bun",
+      "args": ["c:/Users/ratin/Desktop/my-PROJECTS/Gong Alter/src/mcp/server.ts"]
+    }
+  }
+}

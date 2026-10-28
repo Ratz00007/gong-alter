@@ -1,0 +1,151 @@
+{
+  "id": "G1",
+  "name": "Clean discovery call, two speakers",
+  "language": "en",
+  "durationSec": 1500,
+  "scoreTasks": [
+    "T03",
+    "T04",
+    "T05",
+    "T06",
+    "T07"
+  ],
+  "segments": [
+    {
+      "speaker": "REP",
+      "startMs": 0,
+      "endMs": 4200,
+      "text": "Thanks for making time. Before anything else - what is driving the interest right now?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 4400,
+      "endMs": 12400,
+      "text": "Our onboarding takes 6 weeks today, and the reporting behind it is all manual. Every new hire adds two weeks of setup."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 13000,
+      "endMs": 17200,
+      "text": "How does the onboarding path look today, and where does the reporting cost you time?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 18000,
+      "endMs": 26400,
+      "text": "The reporting is a full day per week, and onboarding needs three approvals. It is the biggest pain, honestly."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 27000,
+      "endMs": 30100,
+      "text": "If we cut both to same-day, what would that be worth?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 31000,
+      "endMs": 35400,
+      "text": "At least 20 percent of team capacity, around 40 hours a month."
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 36000,
+      "endMs": 41500,
+      "text": "Our CFO will need to sign anything above the threshold, so it goes through her for budget."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 42000,
+      "endMs": 45600,
+      "text": "What would you evaluate us against if we ran a pilot?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 46500,
+      "endMs": 54500,
+      "text": "Main criteria are rollout speed and the audit trail; we would compare against the current process before any commitment."
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 55000,
+      "endMs": 61200,
+      "text": "The process would be procurement review then signature by the end of October."
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 62000,
+      "endMs": 68500,
+      "text": "I will champion this internally and set up the steering committee, happy to drive it."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 69000,
+      "endMs": 73200,
+      "text": "Then let's book the technical session next week - does Thursday work?"
+    },
+    {
+      "speaker": "PROSPECT",
+      "startMs": 74000,
+      "endMs": 76900,
+      "text": "Thursday works. Looking forward to it."
+    },
+    {
+      "speaker": "REP",
+      "startMs": 77000,
+      "endMs": 80500,
+      "text": "I'll send the summary today."
+    }
+  ],
+  "expected": {
+    "T03": {
+      "topics": [
+        "onboarding",
+        "today"
+      ],
+      "nextStepSuggested": "Then let's book the technical session next week - does Thursday work?"
+    },
+    "T04": {
+      "M": {
+        "notFound": false,
+        "valueIncludes": "6 weeks"
+      },
+      "E": {
+        "notFound": false,
+        "valueIncludes": "CFO"
+      },
+      "D_CRITERIA": {
+        "notFound": false,
+        "valueIncludes": "criteria"
+      },
+      "D_PROCESS": {
+        "notFound": false,
+        "valueIncludes": "process"
+      },
+      "I": {
+        "notFound": false,
+        "valueIncludes": "manual"
+      },
+      "C": {
+        "notFound": false,
+        "valueIncludes": "champion"
+      }
+    },
+    "T05": [
+      "NEXT_STEP",
+      "BUYING_SIGNAL",
+      "PRICING_SIGNAL",
+      "TIMELINE_SIGNAL"
+    ],
+    "T06": {
+      "discovery": 8,
+      "value": 8,
+      "objections": 5,
+      "next_step": 9,
+      "talk_balance": 10,
+      "rapport": 7
+    },
+    "T07": {
+      "detailIncludes": "6 weeks"
+    }
+  }
+}

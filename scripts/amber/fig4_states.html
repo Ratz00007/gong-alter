@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  .canvas { position: relative; width: 1150px; height: 400px; background: #ffffff;
+            font-family: 'Liberation Sans', 'DejaVu Sans', 'Noto Sans SC', sans-serif; }
+  .node { position: absolute; box-sizing: border-box; background: #eeeceb;
+          border: 1.5px solid #c1aea4; border-radius: 10px; padding: 9px 10px 7px 12px; }
+  .node.stage.ai    { border-left: 5px solid #d76932; background: #f4eeec; }
+  .node.milestone   { background: #58463d; border: none; color: #ffffff; }
+  .node.failed      { background: #f6e7e3; border: 1.5px solid #a84a3a; }
+  .node.canceled    { background: #f4f2f0; border: 1.5px dashed #94897d; }
+  .name { font-size: 26px; font-weight: 700; color: #22201f; line-height: 1.12; margin-bottom: 4px; }
+  .sub  { font-size: 20px; color: #89827f; line-height: 1.22; }
+  .milestone .name { color: #ffffff; }
+  .milestone .sub  { color: #d9c8be; }
+  .failed .name    { color: #7c3527; }
+  .failed .sub     { color: #a5766a; }
+  .wires { position: absolute; left: 0; top: 0; width: 1150px; height: 400px; pointer-events: none; }
+  .wlab { position: absolute; font-size: 19px; font-weight: 700; color: #58463d; background: #ffffff; padding: 0 6px; }
+  .wlab.user { color: #94897d; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <!-- Top lane: the six pipeline stages -->
+  <div class="node" id="n1" style="left:30px;  top:24px; width:165px; height:86px;">
+    <div class="name">UPLOADED</div>
+    <div class="sub">asset stored, job queued</div>
+  </div>
+  <div class="node" id="n2" style="left:215px; top:24px; width:165px; height:86px;">
+    <div class="name">NORMALIZING</div>
+    <div class="sub">ffmpeg 16 kHz mono WAV</div>
+  </div>
+  <div class="node" id="n3" style="left:400px; top:24px; width:165px; height:86px;">
+    <div class="name">TRANSCRIBING</div>
+    <div class="sub">local STT + speakers</div>
+  </div>
+  <div class="node stage ai" id="n4" style="left:585px; top:24px; width:165px; height:86px;">
+    <div class="name">ANALYZING</div>
+    <div class="sub">T03-T08 per policy</div>
+  </div>
+  <div class="node" id="n5" style="left:770px; top:24px; width:165px; height:86px;">
+    <div class="name">INDEXING</div>
+    <div class="sub">local embeddings</div>
+  </div>
+  <div class="node milestone" id="n6" style="left:955px; top:24px; width:165px; height:86px;">
+    <div class="name">READY</div>
+    <div class="sub">all outputs live</div>
+  </div>
+  <!-- Lower lane -->
+  <div class="node canceled" id="n7" style="left:30px; top:250px; width:165px; height:86px;">
+    <div class="name">CANCELED</div>
+    <div class="sub">artifacts retained</div>
+  </div>
+  <div class="node failed" id="n8" style="left:430px; top:250px; width:300px; height:86px;">
+    <div class="name">FAILED &middot; terminal, retryable</div>
+    <div class="sub">errorMessage + failedStage persisted; parks after 3 attempts</div>
+  </div>
+  <div class="node" id="n9" style="left:770px; top:250px; width:165px; height:86px;">
+    <div class="name">REVIEWED</div>
+    <div class="sub">insights resolved</div>
+  </div>
+  <div class="node" id="n10" style="left:955px; top:250px; width:165px; height:86px;">
+    <div class="name">ARCHIVED</div>
+    <div class="sub">out of inbox</div>
+  </div>
+  <!-- Edge labels (placed clear of all wires) -->
+  <div class="wlab" style="left:320px; top:138px;">any stage fails</div>
+  <div class="wlab" style="left:662px; top:190px;">retry &le; 3</div>
+  <div class="wlab user" style="left:150px; top:178px;">user cancel</div>
+  <div class="wlab user" style="left:898px; top:180px;">review</div>
+  <svg class="wires" id="wires"></svg>
+</div>
+<script>
+window.addEventListener('load', function () {
+  document.fonts.ready.then(function () {
+    requestAnimationFrame(function () { draw(); document.body.dataset.ready = '1'; });
+  });
+});
+function draw() {
+  var svg = document.getElementById('wires');
+  var c = document.querySelector('.canvas').getBoundingClientRect();
+  svg.setAttribute('viewBox', '0 0 ' + c.width + ' ' + c.height);
+  var NS = 'http://www.w3.org/2000/svg';
+  var mk = document.createElementNS(NS, 'marker');
+  mk.setAttribute('id', 'arr'); mk.setAttribute('markerWidth', '10'); mk.setAttribute('markerHeight', '10');
+  mk.setAttribute('refX', '8'); mk.setAttribute('refY', '5'); mk.setAttribute('orient', 'auto');
+  var tri = document.createElementNS(NS, 'path');
+  tri.setAttribute('d', 'M1,1 L9,5 L1,9 Z'); tri.setAttribute('fill', '#58463d');
+  mk.appendChild(tri); svg.appendChild(mk);
+  var mkr = document.createElementNS(NS, 'marker');
+  mkr.setAttribute('id', 'arrd'); mkr.setAttribute('markerWidth', '10'); mkr.setAttribute('markerHeight', '10');
+  mkr.setAttribute('refX', '8'); mkr.setAttribute('refY', '5'); mkr.setAttribute('orient', 'auto');
+  var trid = document.createElementNS(NS, 'path');
+  trid.setAttribute('d', 'M1,1 L9,5 L1,9 Z'); trid.setAttribute('fill', '#a84a3a');
+  mkr.appendChild(trid); svg.appendChild(mkr);
+  function box(id) {
+    var r = document.getElementById(id).getBoundingClientRect();
+    return { t: r.top - c.top, b: r.bottom - c.top, l: r.left - c.left, r: r.right - c.left,
+             cx: (r.left + r.right) / 2 - c.left, cy: (r.top + r.bottom) / 2 - c.top };
+  }
+  var n1 = box('n1'), n2 = box('n2'), n3 = box('n3'), n4 = box('n4'), n5 = box('n5'),
+      n6 = box('n6'), n7 = box('n7'), n8 = box('n8'), n9 = box('n9'), n10 = box('n10');
+  function path(d, opts) {
+    opts = opts || {};
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d); p.setAttribute('fill', 'none');
+    p.setAttribute('stroke', opts.stroke || '#58463d');
+    p.setAttribute('stroke-width', '2.4');
+    if (opts.dash) p.setAttribute('stroke-dasharray', '7 5');
+    p.setAttribute('marker-end', 'url(#' + (opts.marker || 'arr') + ')');
+    svg.appendChild(p);
+  }
+  // Happy path: adjacent stages only
+  var pairs = [[n1, n2], [n2, n3], [n3, n4], [n4, n5], [n5, n6]];
+  pairs.forEach(function (pr) {
+    path('M ' + (pr[0].r - 2) + ' ' + pr[0].cy + ' L ' + (pr[1].l - 5) + ' ' + pr[1].cy);
+  });
+  // Failure bus: y=170, spans NORMALIZING..INDEXING centers
+  var BUSY = 170;
+  var bus = document.createElementNS(NS, 'path');
+  bus.setAttribute('d', 'M ' + n2.cx + ' ' + BUSY + ' L ' + n5.cx + ' ' + BUSY);
+  bus.setAttribute('fill', 'none'); bus.setAttribute('stroke', '#a84a3a');
+  bus.setAttribute('stroke-width', '2'); bus.setAttribute('stroke-dasharray', '7 5');
+  svg.appendChild(bus);
+  // Stubs from each processing stage down to the bus (no arrowheads)
+  [n2, n3, n4, n5].forEach(function (n) {
+    var stub = document.createElementNS(NS, 'path');
+    stub.setAttribute('d', 'M ' + n.cx + ' ' + (n.b + 1) + ' L ' + n.cx + ' ' + BUSY);
+    stub.setAttribute('fill', 'none'); stub.setAttribute('stroke', '#a84a3a');
+    stub.setAttribute('stroke-width', '2'); stub.setAttribute('stroke-dasharray', '7 5');
+    svg.appendChild(stub);
+  });
+  // Bus down into FAILED
+  path('M ' + n8.cx + ' ' + BUSY + ' L ' + n8.cx + ' ' + (n8.t - 5), { stroke: '#a84a3a', dash: true, marker: 'arrd' });
+  // Retry: FAILED up to the failed stage (dashed, arrow up at bus)
+  path('M ' + (n8.cx + 70) + ' ' + (n8.t - 5) + ' L ' + (n8.cx + 70) + ' ' + (BUSY - 4), { stroke: '#a84a3a', dash: true, marker: 'arrd' });
+  // User cancel: bus left end across to CANCELED
+  path('M ' + n2.cx + ' ' + BUSY + ' L ' + n7.cx + ' ' + BUSY + ' L ' + n7.cx + ' ' + (n7.t - 5), { stroke: '#94897d', dash: true, marker: 'arr' });
+  // READY -> REVIEWED (user review)
+  path('M ' + n6.cx + ' ' + (n6.b + 1) + ' L ' + n6.cx + ' ' + 208 + ' L ' + n9.cx + ' ' + 208 + ' L ' + n9.cx + ' ' + (n9.t - 5));
+  // REVIEWED -> ARCHIVED
+  path('M ' + (n9.r - 2) + ' ' + n9.cy + ' L ' + (n10.l - 5) + ' ' + n10.cy);
+}
+</script>
+</body>
+</html>

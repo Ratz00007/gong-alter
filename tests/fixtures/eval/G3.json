@@ -1,0 +1,81 @@
+{
+  "id": "G3",
+  "name": "Technical demo, three speakers",
+  "language": "en",
+  "durationSec": 1740,
+  "scoreTasks": [
+    "T02",
+    "T03",
+    "T04"
+  ],
+  "segments": [
+    {
+      "speaker": "SPEAKER_00",
+      "startMs": 0,
+      "endMs": 4000,
+      "text": "Welcome - let me show you the audit trail and the API, then we open it to questions."
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "startMs": 4400,
+      "endMs": 12400,
+      "text": "Our onboarding must drop from 6 weeks to under 1 week; that is the measurable goal the board set."
+    },
+    {
+      "speaker": "SPEAKER_02",
+      "startMs": 13000,
+      "endMs": 18600,
+      "text": "Security will evaluate the criteria of SSO, the audit trail, and data residency against our policy."
+    },
+    {
+      "speaker": "SPEAKER_00",
+      "startMs": 19000,
+      "endMs": 24000,
+      "text": "Onboarding automation is exactly what the rollout accelerator does."
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "startMs": 25000,
+      "endMs": 31200,
+      "text": "The process would be security review, then procurement, then signature by the end of the quarter."
+    },
+    {
+      "speaker": "SPEAKER_02",
+      "startMs": 32000,
+      "endMs": 36600,
+      "text": "Budget approval sits with our CFO; she signs anything above the threshold."
+    }
+  ],
+  "expected": {
+    "T02": {
+      "repCluster": "UNKNOWN"
+    },
+    "T03": {
+      "topics": [
+        "audit",
+        "trail"
+      ],
+      "nextStepSuggested": null
+    },
+    "T04": {
+      "M": {
+        "notFound": true
+      },
+      "E": {
+        "notFound": true
+      },
+      "D_CRITERIA": {
+        "notFound": true
+      },
+      "D_PROCESS": {
+        "notFound": true
+      },
+      "I": {
+        "notFound": true
+      },
+      "C": {
+        "notFound": true
+      }
+    }
+  }
+}
